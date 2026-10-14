@@ -140,10 +140,8 @@ jobs:
             echo "Promoting ${BASELINE} to stable; the RC commit is HEAD or an ancestor of HEAD."
             exit 0
           fi
-          # BASELINE may not be a true git ancestor of HEAD (e.g. it was squash-merged
-          # into this branch's history rather than true-merged), so ancestry can't be
-          # relied on here. Compare tree content instead: if HEAD's tree is identical to
-          # BASELINE's, there's nothing new to release.
+          # The previous release tag may not be an ancestor after a squash merge.
+          # Compare trees to avoid rejecting that history while blocking duplicate releases.
           if [ "$(git rev-parse "${BASELINE}^{tree}")" = "$(git rev-parse "HEAD^{tree}")" ]; then
             echo "ERROR: No changes since ${BASELINE} (working tree is identical); refusing to create a duplicate release."
             exit 1
